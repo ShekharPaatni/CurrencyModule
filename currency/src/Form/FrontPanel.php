@@ -7,8 +7,12 @@
  * and open the template in the editor.
  */
 namespace Drupal\currency\Form;
-use \Drupal\Core\Form\FormBase;
-
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Ajax\RemoveCommand;
+use Drupal\Core\Ajax\AfterCommand;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Form\FormStateInterface;
 class FrontPanel extends FormBase{
   /**
    * 
@@ -16,8 +20,9 @@ class FrontPanel extends FormBase{
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @return array $form
    */
-  public function buildForm(array $form, \Drupal\Core\Form\FormStateInterface $form_state) {
-   $options= \Drupal::service('currency.fetch_data')->getCheck();
+  public function buildForm(array $form, FormStateInterface $form_state) {
+   $service=\Drupal::service('currency.fetch_data');
+    $options= $service->getCheck();
    
    $form['amount']=[
         '#type' => 'number',
@@ -75,31 +80,32 @@ class FrontPanel extends FormBase{
  * @return \Drupal\Core\Ajax\AjaxResponse
  */
 public function gettingData(array &$form, \Drupal\Core\Form\FormStateInterface $form_state){
-  $response=new \Drupal\Core\Ajax\AjaxResponse();
-  $options= \Drupal::service('currency.fetch_data')->getInfo();
+  $service=\Drupal::service('currency.fetch_data');
+  $response=new AjaxResponse();
+  $options= $service->getInfo();
   $amount=$form_state->getValue('amount');
   $to=$form_state->getValue('to');
   $from=$form_state->getValue('from');
     if($amount>0){
       if($to != $from){
-        $res=\Drupal::service('currency.fetch_data')->currencyApi($from,$to,$amount);
+        $res=$service->currencyApi($from,$to,$amount);
           if(\Drupal::config('currency.converter')->get('selection')!= "Select Currency API"){
             $result=$options[$to]." is equals to ".$res.".";
-            $response->addCommand(new \Drupal\Core\Ajax\HtmlCommand('#result',$result));
-            $response->addCommand(new \Drupal\Core\Ajax\RemoveCommand('#graphResult >div'));
-            $response->addCommand(new \Drupal\Core\Ajax\RemoveCommand('#genrateGraph'));
-            $response->addCommand(new \Drupal\Core\Ajax\AfterCommand('#result','<svg id="genrateGraph" height=250px width=100%></svg>')); 
-            $response->addCommand(new \Drupal\Core\Ajax\AppendCommand('#graphResult',\Drupal::service('currency.fetch_data')->createGraph($from,$to))); 
+            $response->addCommand(new HtmlCommand('#result',$result));
+            $response->addCommand(new RemoveCommand('#graphResult >div'));
+            $response->addCommand(new RemoveCommand('#genrateGraph'));
+            $response->addCommand(new AfterCommand('#result','<svg id="genrateGraph" height=250px width=100%></svg>')); 
+            $response->addCommand(new AppendCommand('#graphResult',$service->createGraph($from,$to))); 
   
             
           }else{
-            $response->addCommand(new \Drupal\Core\Ajax\HtmlCommand('#result',$res));
+            $response->addCommand(new HtmlCommand('#result',$res));
           }
       }else{
-        $response->addCommand(new \Drupal\Core\Ajax\HtmlCommand('#result',"Please select different currency both currency are same."));
+        $response->addCommand(new HtmlCommand('#result',"Please select different currency both currency are same."));
       }
     }else{
-       $response->addCommand(new \Drupal\Core\Ajax\HtmlCommand('#result',"The amount should be greater than zero."));
+       $response->addCommand(new HtmlCommand('#result',"The amount should be greater than zero."));
       }
  
     
