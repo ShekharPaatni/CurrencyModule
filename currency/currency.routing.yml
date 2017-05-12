@@ -1,0 +1,18 @@
+currency.admin_config_currency:
+  path: /admin/config/system
+  requirements:
+    _permission: 'administer site configuration'
+currency.admin_config_currency_converter:
+  path: /admin/config/system/currency
+  defaults:
+    _form: 'Drupal\currency\Form\CurrencySettings'
+    _title: 'Currency Configuration'
+  requirements:
+    _permission: 'administer site configuration'
+currency.admin_config_currency_API:
+  path: '/api/currency/convertor/{from}/{to}/{amount}'
+  defaults:
+    _controller: 'Drupal\currency\Controller\CurrencyControllerApi::apiHit'
+    _title: 'Currency result'
+  requirements:
+    _permission: 'access content'

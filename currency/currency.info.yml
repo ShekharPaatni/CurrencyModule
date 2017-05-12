@@ -1,0 +1,6 @@
+name: Currency Conversion
+description: This module will help you to calculate the currency using it.
+type: module
+
+package: custom
+core: 8.x

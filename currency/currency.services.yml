@@ -1,0 +1,3 @@
+services:
+  currency.fetch_data:
+    class: Drupal\currency\Controller\CurrencyNameFetch

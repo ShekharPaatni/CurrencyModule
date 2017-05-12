@@ -1,0 +1,11 @@
+currency.admin_config_currency:
+  route_name: currency.admin_config_currency
+  parent: system.admin_config
+  title: Currency Converter
+  weight: -10
+currency.admin_config_currency_converter:
+  route_name: currency.admin_config_currency_converter
+  parent: currency.admin_config_currency
+  title: Currency Converter Settings
+  description: Configure currency converter settings
+  weight: -10

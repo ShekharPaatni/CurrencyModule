@@ -1,0 +1,74 @@
+<?php
+
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+//it is just for the testing 
+function currency_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
+  
+}
+/**
+ * function description
+ * @param int $name Description
+ * @return void Description
+ */
+//it will run and update the table of currency offlne data in the database
+function currency_cron(){
+  //connection creation 
+  $con=\Drupal::database();
+  //calling a service to load all the currency code and name which is in currency converter
+  $options= \Drupal::service('currency.fetch_data')->getInfo();
+  //fetching data if it is available or not
+  $result=$con->select('currency_offlne_data','c')
+      ->fields('c',['currency_id_offline'])
+      ->condition('date',date("Y-m-d"),'=')
+      ->execute()->fetchAll();
+  //it the data is not presists so the data need to be inserted
+  if(count($result)<2){
+      foreach($options as $second => $svalue){
+          $amount=1;
+          $from='USD';
+          $to=$second;
+          $url = "https://www.google.com/finance/converter?a=$amount&from=$from&to=$to";
+          $data= file_get_contents($url);
+          //matching the pattern of the dom element
+          preg_match("/<span class=bld>(.*)<\/span>/", $data, $currencycheck);
+          $result= explode(" ", $currencycheck[1]); 
+          $rate=$result[0];
+          $offdata=[
+            'source_currency' => $from,
+            'destination_currency' => $to,
+            'price' => $rate,
+            'date' => date("Y-m-d")
+          ];
+      $con->insert('currency_offlne_data')->fields($offdata)->execute();
+    }
+  
+}//if the data is found so the table data of the particular date will be updated
+else{
+    
+      foreach($options as $second => $scalue){
+        $amount=1;
+        $from='USD';
+        $to=$second;
+        $url = "https://www.google.com/finance/converter?a=$amount&from=$from&to=$to";
+        $data= file_get_contents($url);
+        //matching the pattern of the dom element 
+        preg_match("/<span class=bld>(.*)<\/span>/", $data, $currencycheck);
+        $result= explode(" ", $currencycheck[1]); 
+        $rate=$result[0];
+        $up=[
+         'price' => $rate, 
+        ];
+        $con->update('currency_offlne_data')->fields($up)
+            ->condition('source_currency', $from,'=')
+            ->condition('destination_currency', $to, '=')
+            ->condition('date',date("Y-m-d"),'=')
+            ->execute();
+      
+    }
+  }
+  
+}
