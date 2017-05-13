@@ -44,8 +44,8 @@ class CurrencyNameFetch{
   public function currencyApi($from_Currency, $to_Currency, $amount){
      
     //it will check whether the currency configuration google api selected or not.
-    if(\Drupal::config('currency.converter')->get('selection')=="Google Currency Converter API"){
-      $url="http://www.google.com/finance/converter?a=$amount&from=$from_Currency&to=$to_Currency";
+    if(\Drupal::config('currency.converter')->get('selection')=='Google Currency Converter API'){
+      $url='http://www.google.com/finance/converter?a=$amount&from='.$from_Currency.'&to='.$to_Currency;
       $data= file_get_contents($url); 
       preg_match("/<span class=bld>(.*)<\/span>/", $data, $currencycheck);
       $result= explode(" ", $currencycheck[1]); 
@@ -69,7 +69,7 @@ class CurrencyNameFetch{
     }//if the user did not select any thing from the currency convertor configuration it will send the error.
     
     else{
-          return "Please Select the Currency Convertor API /admin/config/system/currency";
+          return 'Please Select the Currency Convertor API /admin/config/system/currency';
         }
 }
   /**
@@ -96,6 +96,7 @@ class CurrencyNameFetch{
       } 
       return $ar;
 }
+
 /**
  * This is the function which will call on the time of the graph creation 
  * on submit. 
@@ -130,9 +131,9 @@ class CurrencyNameFetch{
      
    }
    $new_json= json_encode($newarray);
-   
    return $new_json;
  }
 
+ 
 }
   

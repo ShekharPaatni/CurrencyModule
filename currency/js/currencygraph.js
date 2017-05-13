@@ -10,16 +10,16 @@
 
 function InitChart() {
 
-  var lineData = jQuery.parseJSON(($('#graphResult div').text()));
+  var lineData =JSON.parse(($('#graphResult div').text()));
 
   var vis = d3.select("#genrateGraph"),
     WIDTH = 200,
     HEIGHT = 200,
     MARGINS = {
-      top: 20,
-      right: 20,
-      bottom: 20,
-      left: 50
+      top: 10,
+      right: 10,
+      bottom: 10,
+      left: 70
     },
     xRange = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([d3.min(lineData, function (d) {
         return d.date;
@@ -39,14 +39,14 @@ function InitChart() {
 
     xAxis = d3.svg.axis()
       .scale(xRange)
-      .tickSize(2)
+      .tickSize(4)
       .tickSubdivide(true)
       .tickFormat(d3.format('d')),
       
 
     yAxis = d3.svg.axis()
       .scale(yRange)
-      .tickSize(5)
+      .tickSize(8)
       .orient("left")
       .tickSubdivide(true);
 
@@ -75,9 +75,7 @@ vis.append("svg:path")
   .attr("stroke", "blue")
   .attr("stroke-width", 2)
   .attr("fill", "none");
-
 }
-           },1500);
         });      
     }
 }  

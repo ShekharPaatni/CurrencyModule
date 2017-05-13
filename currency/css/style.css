@@ -1,5 +1,6 @@
 #block-currencyconverterblock{
     background-color: white;
+    border: transparent;
 }
 #block-currencyconverterblock > h2{
     font-size: 12px;
@@ -66,5 +67,5 @@
 }
 
 svg#genrateGraph {
-    padding-left: 20px;
+    padding-left: 5px;
 }
