@@ -52,13 +52,7 @@ class CurrencySettings extends ConfigFormBase {
       '#default_value' => $this->config('currency.converter')->get('selection'),
       '#weight' => -30,
     ];
-    $form['Currency_Converter_API']['APILink'] = [
-      '#type' => 'container',
-      '#prefix' => '<div id="currencyAPI">',
-      '#suffix' => '</div>',
-      '#weight' => -10
-    ];
-    $form['Selection'] = [
+     $form['Selection'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Select Currency you want to display:'),
       '#options' => $options,
@@ -72,6 +66,7 @@ class CurrencySettings extends ConfigFormBase {
    * This function will save the data into the config table.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    //saving the data into the config table.
     $this->config('currency.converter')->set('selection', $form_state->getValue('selection'))->save();
     $this->config('currency.converter')->set('selecti', $form_state->getValue('Selection'))->save();
     parent::submitForm($form, $form_state);

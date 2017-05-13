@@ -27,8 +27,8 @@ class FrontPanel extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $service = \Drupal::service('currency.fetch_data');
+    //This will fetch only those country currency name which are selected by you in /admin/config/system/currency.
     $options = $service->getCheck();
-
     $form['amount'] = [
       '#type' => 'number',
       '#size' => 40,
@@ -72,12 +72,11 @@ class FrontPanel extends FormBase {
       '#prefix' => '<div id="graphResult"></div>',
     ];
     $form['#attached']['library'][] = 'currency/currency-check';
-    $form['#attached']['drupalSettings'] = ['result' => "ds"];
     return $form;
   }
 
   /**
-   * 
+   *This function will call when the currency converter convert button will click it will fetch the data. 
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @return \Drupal\Core\Ajax\AjaxResponse
@@ -85,18 +84,25 @@ class FrontPanel extends FormBase {
   public function gettingData(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
     $service = \Drupal::service('currency.fetch_data');
     $response = new AjaxResponse();
+    //it will fetch all the currency code and name.
     $options = $service->getInfo();
+    //Fetching the data from the block placed area.
     $amount = $form_state->getValue('amount');
     $to = $form_state->getValue('to');
     $from = $form_state->getValue('from');
+    //condition will check whether the number must be greater than 0 and response accordingly.
     if ($amount > 0) {
+      //In this condition will check whether both currency are equals or not.
       if ($to != $from) {
+        //It will compute the result and return and save it to $res variable.
         $res = $service->currencyApi($from, $to, $amount);
         if (\Drupal::config('currency.converter')->get('selection') != "Select Currency API") {
           $result = $options[$to] . " is equals to " . $res . ".";
           $response->addCommand(new HtmlCommand('#result', $result));
           $response->addCommand(new RemoveCommand('#graphResult > div'));
           $response->addCommand(new RemoveCommand('#genrateGraph'));
+//          If the selected API is equals to Data Offline Handling so then the graph will appear else it 
+//          will not create.
           if (\Drupal::config('currency.converter')->get('selection') == 'Data Offline Handling') {
             $response->addCommand(new AfterCommand('#result', '<svg id="genrateGraph" height=250px width=100%></svg>'));
             $response->addCommand(new AppendCommand('#graphResult', $service->createGraph($from, $to)));

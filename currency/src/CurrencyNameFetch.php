@@ -6,7 +6,6 @@
  * and open the template in the editor.
  */
 namespace Drupal\currency;
-
 use Drupal\Core\Database\Connection;
 class CurrencyNameFetch{
   
@@ -47,6 +46,7 @@ class CurrencyNameFetch{
     if(\Drupal::config('currency.converter')->get('selection')=='Google Currency Converter API'){
       $url='http://www.google.com/finance/converter?a=$amount&from='.$from_Currency.'&to='.$to_Currency;
       $data= file_get_contents($url); 
+      //it will match the content and save it into the differency variable.
       preg_match("/<span class=bld>(.*)<\/span>/", $data, $currencycheck);
       $result= explode(" ", $currencycheck[1]); 
       return $result[0];
@@ -121,16 +121,24 @@ class CurrencyNameFetch{
                 ->orderBy('cod.date','DESC')
                 ->range(0,4)
                 ->execute()->fetchAll();
+   //converting the data into the array.
    $to_array_result= json_decode(json_encode($toarray),TRUE);
    $newarray=[];
    $count=0;
+   //creating a new array in the below steps.
    for($i= sizeof($from_array_result)-1;$i>=0;$i--){
      $newarray[$count]['price']=$to_array_result[$i]['price']/$from_array_result[$i]['price'];
      $newarray[$count]['date']=date("d", strtotime($to_array_result[$i]['date']));
      $count++;
      
    }
+   //unsetting all the variable 
+   unset($from_array_result);
+   unset($toarray);
+   unset($to_array_result);
+   unset($fromarray);
    $new_json= json_encode($newarray);
+   //returning the json data to the FrontPanel file.
    return $new_json;
  }
 
