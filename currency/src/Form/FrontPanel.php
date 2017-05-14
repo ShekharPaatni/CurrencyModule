@@ -76,7 +76,7 @@ class FrontPanel extends FormBase {
   }
 
   /**
-   *This function will call when the currency converter convert button will click it will fetch the data. 
+   * This function will call when the currency converter convert button will click it will fetch the data. 
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @return \Drupal\Core\Ajax\AjaxResponse

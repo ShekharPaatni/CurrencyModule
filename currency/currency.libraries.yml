@@ -2,11 +2,10 @@ currency-check:
   version: VERSION
   css:
     theme:
-      https://fonts.googleapis.com/css?family=Muli: {type: external}
       css/style.css: {}
       css/adminbac.css: {}
   js:
-    http://d3js.org/d3.v3.min.js: {type: external}
+    js/d3.v3.min.js: {}
     js/currencygraph.js: {}
     dependencies:
       - core/jquery

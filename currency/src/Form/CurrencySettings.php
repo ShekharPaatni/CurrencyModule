@@ -52,7 +52,7 @@ class CurrencySettings extends ConfigFormBase {
       '#default_value' => $this->config('currency.converter')->get('selection'),
       '#weight' => -30,
     ];
-     $form['Selection'] = [
+    $form['Selection'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Select Currency you want to display:'),
       '#options' => $options,

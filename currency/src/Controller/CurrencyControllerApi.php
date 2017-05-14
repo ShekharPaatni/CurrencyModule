@@ -12,6 +12,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
 class CurrencyControllerApi extends ControllerBase {
 
   /**
@@ -19,18 +20,20 @@ class CurrencyControllerApi extends ControllerBase {
    * @var database object 
    */
   protected $database;
-/**
- * 
- * @param Connection $database
- */
+
+  /**
+   * 
+   * @param Connection $database
+   */
   public function __construct(Connection $database) {
     $this->database = $database;
   }
-/**
- * 
- * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
- * @return \static
- */
+
+  /**
+   * 
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   * @return \static
+   */
   public static function create(ContainerInterface $container) {
 
     return new static(
@@ -66,4 +69,5 @@ class CurrencyControllerApi extends ControllerBase {
     //returning the result of the changing currency into json format.
     return new JsonResponse(['Data' => ((1 / $resultsecond[0]['price']) * $result[0]['price']) * $amount]);
   }
+
 }

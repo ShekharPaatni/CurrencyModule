@@ -1,4 +1,4 @@
 services:
   currency.fetch_data:
-    class: Drupal\currency\CurrencyNameFetch
+    class: Drupal\currency\Controller\CurrencyNameFetch
     arguments: ['@database']
