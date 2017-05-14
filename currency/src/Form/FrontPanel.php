@@ -41,13 +41,11 @@ class FrontPanel extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Select Your Currency From'),
       '#options' => $options,
-      '#required' => TRUE
     ];
     $form['to'] = [
       '#type' => 'select',
       '#title' => $this->t('Select Your Currency To'),
       '#options' => $options,
-      '#required' => TRUE,
       '#attributes' => ['id' => 'currency_from'],
     ];
     $form['submission'] = [
@@ -92,32 +90,41 @@ class FrontPanel extends FormBase {
     $from = $form_state->getValue('from');
     //condition will check whether the number must be greater than 0 and response accordingly.
     if ($amount > 0) {
-      //In this condition will check whether both currency are equals or not.
-      if ($to != $from) {
-        //It will compute the result and return and save it to $res variable.
-        $res = $service->currencyApi($from, $to, $amount);
-        if (\Drupal::config('currency.converter')->get('selection') != "Select Currency API") {
-          $result = $options[$to] . " is equals to " . $res . ".";
-          $response->addCommand(new HtmlCommand('#result', $result));
-          $response->addCommand(new RemoveCommand('#graphResult > div'));
-          $response->addCommand(new RemoveCommand('#genrateGraph'));
+      if ($to != NULL) {
+        //In this condition will check whether both currency are equals or not.
+        if ($to != $from) {
+          //It will compute the result and return and save it to $res variable.
+          $res = $service->currencyApi($from, $to, $amount);
+          if (\Drupal::config('currency.converter')->get('selection') != 'Select Currency API') {
+            $result = $options[$to] . " is equals to " . $res . ".";
+            $response->addCommand(new HtmlCommand('#result', $result));
+            $response->addCommand(new RemoveCommand('#graphResult > div'));
+            $response->addCommand(new RemoveCommand('#genrateGraph'));
 //          If the selected API is equals to Data Offline Handling so then the graph will appear else it 
 //          will not create.
-          if (\Drupal::config('currency.converter')->get('selection') == 'Data Offline Handling') {
-            $response->addCommand(new AfterCommand('#result', '<svg id="genrateGraph" height=250px width=100%></svg>'));
-            $response->addCommand(new AppendCommand('#graphResult', $service->createGraph($from, $to)));
+            if (\Drupal::config('currency.converter')->get('selection') == 'Data Offline Handling') {
+              $response->addCommand(new AfterCommand('#result', '<svg id="genrateGraph" height=250px width=100%></svg>'));
+              $response->addCommand(new AppendCommand('#graphResult', $service->createGraph($from, $to)));
+            }
+          }
+          else {
+            $response->addCommand(new HtmlCommand('#result', $res));
           }
         }
         else {
-          $response->addCommand(new HtmlCommand('#result', $res));
+          $response->addCommand(new RemoveCommand('#graphResult > div'));
+          $response->addCommand(new RemoveCommand('#genrateGraph'));
+          $response->addCommand(new HtmlCommand('#result', 'Please select different currency both currency are same.'));
         }
       }
       else {
-        $response->addCommand(new HtmlCommand('#result', "Please select different currency both currency are same."));
+        $response->addCommand(new HtmlCommand('#result', 'Please select the currencies from /admin/config/system/currency'));
       }
     }
     else {
-      $response->addCommand(new HtmlCommand('#result', "The amount should be greater than zero."));
+      $response->addCommand(new RemoveCommand('#graphResult > div'));
+      $response->addCommand(new RemoveCommand('#genrateGraph'));
+      $response->addCommand(new HtmlCommand('#result', 'The amount should be greater than zero.'));
     }
 
 
